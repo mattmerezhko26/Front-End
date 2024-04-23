@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Location Finder</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>City Location Finder</h1>
+    <form id="locationForm">
+        <label for="cityInput">City:</label>
+        <input type="text" id="cityInput" name="cityInput">
+        <label for="countryInput">Country:</label>
+        <input type="text" id="countryInput" name="countryInput">
+        <button type="submit">Find Location</button>
+    </form>
+    <div id="locationResult"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#locationForm').submit(function(event) {
+                event.preventDefault();
+                var city = $('#cityInput').val();
+                var country = $('#countryInput').val();
+                getLocation(city, country);
+            });
+        });
+
+        function getLocation(city, country) {
+            $.ajax({
+                url: 'https://api.zippopotam.us/' + country + '/' + city,
+                type: 'GET',
+                success: function(response) {
+                    var location = response.places[0];
+                    var displayText = '<h2>Location Details</h2>' +
+                                      '<p>City: ' + location['place name'] + '</p>' +
+                                      '<p>State/Province: ' + location['state'] + '</p>' +
+                                      '<p>Country: ' + location['country'] + '</p>' +
+                                      '<p>Latitude: ' + location['latitude'] + '</p>' +
+                                      '<p>Longitude: ' + location['longitude'] + '</p>';
+                    $('#locationResult').html(displayText);
+                },
+                error: function(xhr, status, error) {
+                    $('#locationResult').html('<p>Error: City not found or invalid country code.</p>');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
